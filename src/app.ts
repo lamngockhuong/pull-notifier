@@ -64,9 +64,9 @@ class App {
     const options = {
       swaggerDefinition: {
         info: {
-          title: 'REST API',
+          title: 'pull-notifier',
           version: '1.0.0',
-          description: 'Example docs',
+          description: 'pull-notifier api docs',
         },
       },
       apis: ['swagger.yaml'],
