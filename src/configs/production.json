@@ -6,7 +6,7 @@
     "dir": "../../logs"
   },
   "template": {
-    "dir": "../static/template"
+    "dir": "../../static/template"
   },
   "cors": {
     "origin": "your.domain.com",
