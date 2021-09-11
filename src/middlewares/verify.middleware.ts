@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { HttpException } from '@exceptions/HttpException';
 import { StatusCodes } from '@utils/status-code';
 import { GITHUB_HEADER } from '@/constants/headers';
