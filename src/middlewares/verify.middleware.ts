@@ -5,6 +5,7 @@ import { GITHUB_HEADER } from '@/constants/headers';
 import { logger } from '@utils/logger';
 import * as crypto from 'crypto';
 import { RequestWithRawBody } from '@interfaces/request.interface';
+import config from 'config';
 
 const getSignature = buf => {
   const hmac = crypto.createHmac('sha256', process.env.SECRET_TOKEN);
@@ -14,6 +15,10 @@ const getSignature = buf => {
 
 export const verifyRequest = (req: RequestWithRawBody, res: Response, next: NextFunction) => {
   try {
+    if (config.get('env') === 'development') {
+      next();
+      return;
+    }
     const expected = req.header(GITHUB_HEADER.X_HUB_SIGNATURE_256);
     const payload = req.rawBody;
     const calculated = getSignature(payload);

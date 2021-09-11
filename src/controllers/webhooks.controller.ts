@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import WebhooksService from '@services/webhooks.service';
+import WebhookService from '@services/webhook.service';
 import { StatusCodes } from '@utils/status-code';
 import { GITHUB_EVENT, GITHUB_HEADER } from '@/constants/headers';
 import { MESSAGES } from '@/constants/messages';
@@ -7,7 +7,7 @@ import { GithubEventDto } from '@dtos/GithubEvent.dto';
 import { ok } from '@utils/response';
 
 class WebhooksController {
-  public webhooksService = new WebhooksService();
+  public webhooksService = new WebhookService();
 
   public github = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

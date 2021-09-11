@@ -12,11 +12,13 @@ const errorMiddleware = (err: HttpException, req: Request, res: Response, next: 
 
     logger.error(`[${req.method}] ${req.path} >> StatusCode:: ${status}, Message:: ${message}`);
     if (status === StatusCodes.INTERNAL_SERVER_ERROR) {
+      console.log(err);
       res.status(status).json(error(undefined, MESSAGES.SERVER_ERROR));
     } else {
       res.status(status).json(error(undefined, message));
     }
   } catch (error) {
+    logger.error(err);
     next(error);
   }
 };

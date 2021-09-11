@@ -13,10 +13,17 @@
     "test": "jest --forceExit --detectOpenHandles",
     "lint": "eslint --ignore-path .gitignore --ext .ts src/",
     "lint:fix": "npm run lint -- --fix",
+    "prisma:init": "prisma init",
+    "prisma:migrate": "prisma migrate dev --preview-feature",
+    "prisma:generate": "prisma generate",
     "deploy:prod": "npm run build && pm2 start ecosystem.config.js --only prod",
     "deploy:dev": "pm2 start ecosystem.config.js --only dev"
   },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
+  },
   "dependencies": {
+    "@prisma/client": "^3.0.2",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
@@ -71,6 +78,7 @@
     "node-gyp": "^8.2.0",
     "nodemon": "^2.0.12",
     "prettier": "^2.4.0",
+    "prisma": "^3.0.2",
     "supertest": "^6.1.6",
     "tsconfig-paths": "^3.11.0"
   },

@@ -1,18 +1,21 @@
 import Chatwork from '@utils/chatwork';
-import { GithubEventDto, User } from "@dtos/GithubEvent.dto";
+import { GithubEventDto, User } from '@dtos/GithubEvent.dto';
 import { isEmpty } from '@/utils/util';
 import { HttpException } from '@exceptions/HttpException';
 import { StatusCodes } from '@utils/status-code';
 import { MESSAGES } from '@/constants/messages';
 import { compileTemplate, Options } from '@utils/template';
 import { PR_TEMPLATE } from '@/constants/commons';
+import ServiceService from '@services/service.service';
 
-class WebhooksService {
+class WebhookService {
+  public serviceService = new ServiceService();
   private chatwork = new Chatwork();
 
   public async github(eventData: GithubEventDto): Promise<any> {
     if (isEmpty(eventData)) throw new HttpException(StatusCodes.BAD_REQUEST, MESSAGES.REQUEST_BODY_REQUIRED);
     console.log(eventData);
+    console.log(await this.serviceService.findServiceByKey('3iWWncZDyQQVnqZqc057'));
     const options: Options = {
       repository_name: eventData.repository.name,
       pull_request_title: eventData.pull_request.title,
@@ -43,4 +46,4 @@ class WebhooksService {
   }
 }
 
-export default WebhooksService;
+export default WebhookService;
