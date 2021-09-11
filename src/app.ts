@@ -13,6 +13,8 @@ import swaggerUi from 'swagger-ui-express';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
+import { ServerResponse } from 'http';
+import { RequestWithRawBody } from '@interfaces/request.interface';
 
 class App {
   public app: express.Application;
@@ -49,7 +51,15 @@ class App {
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
-    this.app.use(express.json());
+    this.app.use(
+      express.json({
+        verify: (req: RequestWithRawBody, res: ServerResponse, buf: Buffer) => {
+          if (req.url.startsWith('/webhooks/github')) {
+            req.rawBody = buf;
+          }
+        },
+      }),
+    );
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
   }
