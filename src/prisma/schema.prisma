@@ -1,0 +1,22 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Webhook {
+  id           Int      @id @default(autoincrement())
+  service_key  String   @unique
+  secret_token String
+  service      String
+  bot          Json?
+  room         Json
+  setting      Json?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@map("webhook")
+}

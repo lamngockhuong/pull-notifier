@@ -4,7 +4,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import config from 'config';
-import express from 'express';
+import express, { Request } from 'express';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
@@ -13,6 +13,7 @@ import swaggerUi from 'swagger-ui-express';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
+import { ServerResponse } from 'http';
 
 class App {
   public app: express.Application;
@@ -49,7 +50,15 @@ class App {
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
-    this.app.use(express.json());
+    this.app.use(
+      express.json({
+        verify: (req: Request, res: ServerResponse, buf: Buffer) => {
+          if (req.url.startsWith('/webhooks/github')) {
+            req.body.rawBody = buf;
+          }
+        },
+      }),
+    );
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
   }
@@ -64,9 +73,9 @@ class App {
     const options = {
       swaggerDefinition: {
         info: {
-          title: 'REST API',
+          title: 'pull-notifier',
           version: '1.0.0',
-          description: 'Example docs',
+          description: 'pull-notifier api docs',
         },
       },
       apis: ['swagger.yaml'],

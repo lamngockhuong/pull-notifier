@@ -1,12 +1,14 @@
 {
-    "env": "production",
-    "secretKey": "secretKey",
-    "log": {
-        "format": "combined",
-        "dir": "../logs"
-    },
-    "cors": {
-        "origin": "your.domain.com",
-        "credentials": true
-    }
+  "env": "production",
+  "log": {
+    "format": "combined",
+    "dir": "../../logs"
+  },
+  "static": {
+    "template": "../../static/template"
+  },
+  "cors": {
+    "origin": "your.domain.com",
+    "credentials": true
+  }
 }

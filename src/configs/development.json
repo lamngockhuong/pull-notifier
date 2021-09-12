@@ -1,12 +1,14 @@
 {
-    "env": "development",
-    "secretKey": "secretKey",
-    "log": {
-        "format": "dev",
-        "dir": "../logs"
-    },
-    "cors": {
-        "origin": true,
-        "credentials": true
-    }
+  "env": "development",
+  "log": {
+    "format": "dev",
+    "dir": "../../logs"
+  },
+  "static": {
+    "template": "../../static/template"
+  },
+  "cors": {
+    "origin": true,
+    "credentials": true
+  }
 }
