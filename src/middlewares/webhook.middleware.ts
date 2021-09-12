@@ -1,10 +1,11 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, RequestHandler, Response } from 'express';
 import { HttpException } from '@exceptions/HttpException';
 import { StatusCodes } from '@utils/status-code';
-import { GITHUB_HEADER } from '@/constants/headers';
+import { GITHUB_EVENT, GITHUB_HEADER } from '@/constants/headers';
 import { logger } from '@utils/logger';
 import * as crypto from 'crypto';
 import { RequestWithRawBody } from '@interfaces/request.interface';
+import { MESSAGES } from '@/constants/messages';
 import config from 'config';
 
 const getSignature = buf => {
@@ -13,8 +14,17 @@ const getSignature = buf => {
   return 'sha256=' + hmac.digest('hex');
 };
 
-export const verifyRequest = (req: RequestWithRawBody, res: Response, next: NextFunction) => {
+export const githubHeaderValidation = (req: RequestWithRawBody, res: Response, next: NextFunction): RequestHandler => {
   try {
+    const event = req.header(GITHUB_HEADER.X_GITHUB_EVENT);
+    if (event !== GITHUB_EVENT.PULL_REQUEST && event !== GITHUB_EVENT.PULL_REQUEST_REVIEW && event !== GITHUB_EVENT.PULL_REQUEST_REVIEW_COMMENT) {
+      next(new HttpException(StatusCodes.OK, MESSAGES.CALL_GITHUB_WEBHOOK_NO_ACTION));
+      return;
+    }
+
+    // Set github event for body payload
+    req.body.event = event;
+
     if (config.get('env') === 'development') {
       next();
       return;

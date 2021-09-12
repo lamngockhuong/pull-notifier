@@ -2,13 +2,16 @@ import fs from 'fs';
 import path from 'path';
 import config from 'config';
 
-const templateDir: string = path.join(__dirname, config.get('template.dir'));
+const templateDir: string = path.join(__dirname, config.get('static.template'));
 
 export interface Options {
   receivers?: string;
   repository_name?: string;
+  commentator?: string;
+  comment_body?: string;
+  comment_url?: string;
   pull_request_title?: string;
-  pull_request_sender?: string;
+  pull_request_owner?: string;
   pull_request_url?: string;
   pull_request_body?: string;
   pull_request_edited_files?: string;
@@ -22,8 +25,11 @@ export const compileTemplate = (templateName: string, options: Options) => {
     .toString()
     .replace('#[receivers]', options.receivers)
     .replace('#[repository_name]', options.repository_name)
+    .replace('#[commentator]', options.commentator)
+    .replace('#[comment_body]', options.comment_body)
+    .replace('#[comment_url]', options.comment_url)
     .replace('#[pull_request_title]', options.pull_request_title)
-    .replace('#[pull_request_sender]', options.pull_request_sender)
+    .replace('#[pull_request_owner]', options.pull_request_owner)
     .replace('#[pull_request_url]', options.pull_request_url)
     .replace('#[pull_request_body]', options.pull_request_body)
     .replace('#[pull_request_edited_files]', options.pull_request_edited_files)

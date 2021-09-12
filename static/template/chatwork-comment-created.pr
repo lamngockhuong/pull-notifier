@@ -1,0 +1,6 @@
+[info][title](#[repository_name]) [piconname:#[commentator]] (commented): #[receivers] 💬[/title]
+[code]#[comment_body][/code]
+Pull           : #[pull_request_title]
+Owner     : [piconname:#[pull_request_owner]][hr]
+Link : #[comment_url][hr]
+[/info]

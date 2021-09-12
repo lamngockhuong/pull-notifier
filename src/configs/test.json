@@ -1,12 +1,11 @@
 {
   "env": "test",
-  "secretKey": "secretKey",
   "log": {
     "format": "dev",
     "dir": "../../logs"
   },
-  "template": {
-    "dir": "../../static/template"
+  "static": {
+    "template": "../../static/template"
   },
   "cors": {
     "origin": true,

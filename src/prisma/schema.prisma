@@ -7,54 +7,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id          Int    @id @default(autoincrement())
-  email       String
-  password    String
-  name        String
-  google_id   String
-  chatwork_id String
-  github_id   String
-  slack_id    String
-
-  Bot     Bot[]
-  Service Service[]
-  @@map("user")
-}
-
-model Bot {
-  id      Int     @id @default(autoincrement())
-  token   String
-  type    BotType
-  user_id Int
-  user    User    @relation(fields: [user_id], references: [id])
-
-  Service Service[]
-  @@map("bot")
-}
-
-model Service {
-  id           Int         @id @default(autoincrement())
-  service_key  String      @unique
+model Webhook {
+  id           Int      @id @default(autoincrement())
+  service_key  String   @unique
   secret_token String
-  type         ServiceType
-  room_id      String
-  bot_id       Int?
-  bot          Bot?        @relation(fields: [bot_id], references: [id])
-  created_at   DateTime    @default(now())
-  updated_at   DateTime    @updatedAt
-  user_id      Int
-  user         User        @relation(fields: [user_id], references: [id])
+  service      String
+  bot          Json?
+  room         Json
+  setting      Json?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
-  @@map("service")
-}
-
-enum BotType {
-  CHATWORK
-  SLACK
-}
-
-enum ServiceType {
-  GITHUB
-  GITLAB
+  @@map("webhook")
 }

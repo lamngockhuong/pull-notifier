@@ -1,9 +1,21 @@
-import { GithubAction } from '@/constants/commons';
+export enum GITHUB_ACTION {
+  created = 'created',
+  edited = 'edited',
+  closed = 'closed',
+  opened = 'opened',
+  reopened = 'reopened',
+}
 
-export class GithubEventDto {
+export enum PULL_REQUEST_STATE {
+  open = 'open',
+  closed = 'closed',
+}
+
+export class GithubDto {
   public zen: string;
   public hook_id: number;
-  public action: typeof GithubAction;
+  public event: string;
+  public action: GITHUB_ACTION;
   public pull_request: PullRequest;
   public comment: Comment;
   public repository: Repository;
@@ -15,6 +27,7 @@ class PullRequest {
   public html_url: string;
   public title: string;
   public body: string;
+  public state: PULL_REQUEST_STATE;
   public user: User;
   public assignees: User[];
   public commits: number;
@@ -24,8 +37,9 @@ class PullRequest {
   public created_at: string;
   public updated_at: string;
   public closed_at: string;
+  public merged: boolean;
   public merged_at: string;
-  public merged_by: string;
+  public merged_by: User;
 }
 
 class Comment {

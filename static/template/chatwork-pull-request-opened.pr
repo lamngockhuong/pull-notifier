@@ -1,5 +1,5 @@
-[info][title]New pull : #[pull_request_title] 🎉[/title]
-Sender  : #[pull_request_sender]
+[info][title]New pull : #[pull_request_title] 🖖[/title]
+Owner  : #[pull_request_owner]
 Repo      : #[repository_name]
 [code]#[pull_request_body][/code]
 Number of edited files      : #[pull_request_edited_files]
