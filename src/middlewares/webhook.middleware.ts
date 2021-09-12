@@ -15,7 +15,7 @@ const getSignature = buf => {
 
 export const githubHeaderValidation = (req, res, next): RequestHandler => {
   try {
-    const event = req.headers[GITHUB_HEADER.X_GITHUB_EVENT];
+    const event = req.header(GITHUB_HEADER.X_GITHUB_EVENT);
     if (event !== GITHUB_EVENT.PULL_REQUEST && event !== GITHUB_EVENT.PULL_REQUEST_REVIEW && event !== GITHUB_EVENT.PULL_REQUEST_REVIEW_COMMENT) {
       next(new HttpException(StatusCodes.OK, MESSAGES.CALL_GITHUB_WEBHOOK_NO_ACTION));
       return;
