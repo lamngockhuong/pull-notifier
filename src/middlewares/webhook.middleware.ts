@@ -1,10 +1,9 @@
-import { NextFunction, RequestHandler, Response } from 'express';
+import { RequestHandler } from 'express';
 import { HttpException } from '@exceptions/HttpException';
 import { StatusCodes } from '@utils/status-code';
 import { GITHUB_EVENT, GITHUB_HEADER } from '@/constants/headers';
 import { logger } from '@utils/logger';
 import * as crypto from 'crypto';
-import { RequestWithRawBody } from '@interfaces/request.interface';
 import { MESSAGES } from '@/constants/messages';
 import config from 'config';
 
@@ -14,9 +13,9 @@ const getSignature = buf => {
   return 'sha256=' + hmac.digest('hex');
 };
 
-export const githubHeaderValidation = (req: RequestWithRawBody, res: Response, next: NextFunction): RequestHandler => {
+export const githubHeaderValidation = (req, res, next): RequestHandler => {
   try {
-    const event = req.header(GITHUB_HEADER.X_GITHUB_EVENT);
+    const event = req.headers[GITHUB_HEADER.X_GITHUB_EVENT];
     if (event !== GITHUB_EVENT.PULL_REQUEST && event !== GITHUB_EVENT.PULL_REQUEST_REVIEW && event !== GITHUB_EVENT.PULL_REQUEST_REVIEW_COMMENT) {
       next(new HttpException(StatusCodes.OK, MESSAGES.CALL_GITHUB_WEBHOOK_NO_ACTION));
       return;
@@ -30,7 +29,7 @@ export const githubHeaderValidation = (req: RequestWithRawBody, res: Response, n
       return;
     }
     const expected = req.header(GITHUB_HEADER.X_HUB_SIGNATURE_256);
-    const payload = req.rawBody;
+    const payload = req.body.rawBody;
     const calculated = getSignature(payload);
     console.log(calculated);
     logger.info(`${GITHUB_HEADER.X_HUB_SIGNATURE_256}:`, expected, 'Content:', '-' + payload.toString('utf8') + '-');

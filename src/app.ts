@@ -4,7 +4,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import config from 'config';
-import express from 'express';
+import express, { Request } from 'express';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
@@ -14,7 +14,6 @@ import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
 import { ServerResponse } from 'http';
-import { RequestWithRawBody } from '@interfaces/request.interface';
 
 class App {
   public app: express.Application;
@@ -53,9 +52,9 @@ class App {
     this.app.use(compression());
     this.app.use(
       express.json({
-        verify: (req: RequestWithRawBody, res: ServerResponse, buf: Buffer) => {
+        verify: (req: Request, res: ServerResponse, buf: Buffer) => {
           if (req.url.startsWith('/webhooks/github')) {
-            req.rawBody = buf;
+            req.body.rawBody = buf;
           }
         },
       }),
