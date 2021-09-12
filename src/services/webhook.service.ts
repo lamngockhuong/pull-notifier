@@ -132,7 +132,6 @@ class WebhookService {
         .join('');
     } else if (
       this.event(eventData) === EVENT.PULL_REQUEST_OPENED ||
-      this.event(eventData) === EVENT.PULL_REQUEST_MERGED ||
       this.event(eventData) === EVENT.PULL_REQUEST_CLOSED ||
       this.event(eventData) === EVENT.PULL_REQUEST_REOPENED
     ) {
@@ -147,6 +146,19 @@ class WebhookService {
           })
           .join('');
       }
+    } else if (this.event(eventData) === EVENT.PULL_REQUEST_CLOSED) {
+      sender = eventData.pull_request.user.login;
+      const reviewers = eventData.pull_request.requested_reviewers.map(o => o.login);
+      reviewers.push(sender);
+
+      receivers = members
+        .map(member => {
+          if (reviewers?.includes(member.github_id)) return `[To:${member.chatwork_id}]`;
+        })
+        .join('');
+    } else if (this.event(eventData) === EVENT.PULL_REQUEST_MERGED) {
+      sender = eventData.pull_request.user.login;
+      receivers = members.map(member => `[To:${member.chatwork_id}]`).join('');
     }
 
     return { sender, receivers };
