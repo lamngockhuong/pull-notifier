@@ -17,7 +17,6 @@ class WebhookService {
   public async github(key: string, eventData: GithubDto): Promise<any> {
     if (isEmpty(eventData)) throw new HttpException(StatusCodes.BAD_REQUEST, MESSAGES.REQUEST_BODY_REQUIRED);
     const webhook = await this.findByKey(key);
-    console.log(webhook);
 
     // Set specify chatwork token
     this.chatwork.apiToken = this.getChatworkToken(webhook);
@@ -32,17 +31,18 @@ class WebhookService {
 
     // Send notification
     let messageRes = undefined;
-    if (this.event(eventData) === EVENT.COMMENT_CREATED) {
+    const event = this.event(eventData);
+    if (event === EVENT.COMMENT_CREATED) {
       messageRes = this.notifyCommentCreated(room.room_id, room.members, receivers, eventData);
-    } else if (this.event(eventData) === EVENT.COMMENT_EDITED) {
+    } else if (event === EVENT.COMMENT_EDITED) {
       messageRes = this.notifyCommentEdited(room.room_id, room.members, receivers, eventData);
-    } else if (this.event(eventData) === EVENT.PULL_REQUEST_OPENED) {
+    } else if (event === EVENT.PULL_REQUEST_OPENED) {
       messageRes = this.notifyPullRequestOpen(room.room_id, room.members, receivers, eventData);
-    } else if (this.event(eventData) === EVENT.PULL_REQUEST_MERGED) {
+    } else if (event === EVENT.PULL_REQUEST_MERGED) {
       messageRes = this.notifyPullRequestMerged(room.room_id, room.members, receivers, eventData);
-    } else if (this.event(eventData) === EVENT.PULL_REQUEST_CLOSED) {
+    } else if (event === EVENT.PULL_REQUEST_CLOSED) {
       messageRes = this.notifyPullRequestClosed(room.room_id, room.members, receivers, eventData);
-    } else if (this.event(eventData) === EVENT.PULL_REQUEST_REOPENED) {
+    } else if (event === EVENT.PULL_REQUEST_REOPENED) {
       messageRes = this.notifyPullRequestReopen(room.room_id, room.members, receivers, eventData);
     }
 
@@ -121,7 +121,8 @@ class WebhookService {
     let sender;
     let receivers;
 
-    if (this.event(eventData) === EVENT.COMMENT_CREATED || this.event(eventData) === EVENT.COMMENT_EDITED) {
+    const event = this.event(eventData);
+    if (event === EVENT.COMMENT_CREATED || event === EVENT.COMMENT_EDITED) {
       sender = eventData.comment.user.login;
       let mentions = eventData.comment.body.match(/(@\S+)(?!.*\1)/g);
       mentions = mentions?.map(i => i.replace('@', ''));
@@ -130,11 +131,7 @@ class WebhookService {
           if (mentions?.includes(member.github_id)) return `[To:${member.chatwork_id}]`;
         })
         .join('');
-    } else if (
-      this.event(eventData) === EVENT.PULL_REQUEST_OPENED ||
-      this.event(eventData) === EVENT.PULL_REQUEST_CLOSED ||
-      this.event(eventData) === EVENT.PULL_REQUEST_REOPENED
-    ) {
+    } else if (event === EVENT.PULL_REQUEST_OPENED || event === EVENT.PULL_REQUEST_REOPENED) {
       sender = eventData.pull_request.user.login;
       const reviewers = eventData.pull_request.requested_reviewers.map(o => o.login);
       if (reviewers.length == 0) {
@@ -146,7 +143,7 @@ class WebhookService {
           })
           .join('');
       }
-    } else if (this.event(eventData) === EVENT.PULL_REQUEST_CLOSED) {
+    } else if (event === EVENT.PULL_REQUEST_CLOSED) {
       sender = eventData.pull_request.user.login;
       const reviewers = eventData.pull_request.requested_reviewers.map(o => o.login);
       reviewers.push(sender);
@@ -156,7 +153,7 @@ class WebhookService {
           if (reviewers?.includes(member.github_id)) return `[To:${member.chatwork_id}]`;
         })
         .join('');
-    } else if (this.event(eventData) === EVENT.PULL_REQUEST_MERGED) {
+    } else if (event === EVENT.PULL_REQUEST_MERGED) {
       sender = eventData.pull_request.user.login;
       receivers = members.map(member => `[To:${member.chatwork_id}]`).join('');
     }
