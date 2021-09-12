@@ -36,6 +36,8 @@ class WebhookService {
       messageRes = this.notifyCommentCreated(room.room_id, room.members, receivers, eventData);
     } else if (event === EVENT.COMMENT_EDITED) {
       messageRes = this.notifyCommentEdited(room.room_id, room.members, receivers, eventData);
+    } else if (event === EVENT.ISSUE_COMMENT) {
+      messageRes = this.notifyIssueComment(room.room_id, room.members, receivers, eventData);
     } else if (event === EVENT.PULL_REQUEST_OPENED) {
       messageRes = this.notifyPullRequestOpen(room.room_id, room.members, receivers, eventData);
     } else if (event === EVENT.PULL_REQUEST_MERGED) {
@@ -75,6 +77,9 @@ class WebhookService {
         // Edit comment
         event = EVENT.COMMENT_EDITED;
       }
+    } else if (eventData.event === GITHUB_EVENT.ISSUE_COMMENT) {
+      // Issue comment
+      event = EVENT.ISSUE_COMMENT;
     }
 
     return event;
@@ -122,7 +127,7 @@ class WebhookService {
     let receivers;
 
     const event = this.event(eventData);
-    if (event === EVENT.COMMENT_CREATED || event === EVENT.COMMENT_EDITED) {
+    if (event === EVENT.COMMENT_CREATED || event === EVENT.COMMENT_EDITED || event === EVENT.ISSUE_COMMENT) {
       sender = eventData.comment.user.login;
       let mentions = eventData.comment.body.match(/(@\S+)(?!.*\1)/g);
       mentions = mentions?.map(i => i.replace('@', ''));
@@ -230,6 +235,21 @@ class WebhookService {
     };
 
     const message = compileTemplate(PR_TEMPLATE.CHATWORK_PULL_REQUEST_CLOSED, options);
+    return this.sendChatworkMessage(roomId, message);
+  }
+
+  private notifyIssueComment(roomId: string, members: any[], receivers: string, eventData: GithubDto) {
+    const options: Options = {
+      repository_name: eventData.repository.name,
+      pull_request_title: eventData.issue.title,
+      pull_request_owner: this.getChatworkId(members, eventData.issue.user.login),
+      commentator: this.getChatworkId(members, eventData.comment.user.login),
+      comment_body: eventData.comment.body,
+      comment_url: eventData.comment.html_url,
+      receivers: receivers,
+    };
+
+    const message = compileTemplate(PR_TEMPLATE.CHATWORK_ISSUE_COMMENT, options);
     return this.sendChatworkMessage(roomId, message);
   }
 

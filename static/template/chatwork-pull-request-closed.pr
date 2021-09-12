@@ -1,5 +1,5 @@
-[info][title]Closed pull request : #[pull_request_title] 🚫[/title]
+[info][title]Closed pull request : #[pull_request_title] 💥[/title]
 Owner  : [piconname:#[pull_request_owner]]
 Repo      : #[repository_name][hr]
-Link : #[pull_request_url][hr]
+🔗 Link : #[pull_request_url][hr]
 #[receivers][/info]

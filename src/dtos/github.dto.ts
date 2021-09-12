@@ -18,6 +18,7 @@ export class GithubDto {
   public action: GITHUB_ACTION;
   public pull_request: PullRequest;
   public comment: Comment;
+  public issue: Issue;
   public repository: Repository;
   public sender: User;
 }
@@ -46,6 +47,16 @@ class PullRequest {
 class Comment {
   public id: number;
   public path: string;
+  public html_url: string;
+  public body: string;
+  public user: User;
+  public created_at: string;
+  public updated_at: string;
+}
+
+class Issue {
+  public id: number;
+  public title: string;
   public html_url: string;
   public body: string;
   public user: User;

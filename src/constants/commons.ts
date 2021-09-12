@@ -5,6 +5,7 @@ export enum PR_TEMPLATE {
   CHATWORK_PULL_REQUEST_CLOSED = 'chatwork-pull-request-closed.pr',
   CHATWORK_COMMENT_CREATED = 'chatwork-comment-created.pr',
   CHATWORK_COMMENT_EDITED = 'chatwork-comment-edited.pr',
+  CHATWORK_ISSUE_COMMENT = 'chatwork-issue-comment.pr',
 }
 
 export enum EVENT {
@@ -14,4 +15,5 @@ export enum EVENT {
   PULL_REQUEST_CLOSED,
   COMMENT_CREATED,
   COMMENT_EDITED,
+  ISSUE_COMMENT,
 }
