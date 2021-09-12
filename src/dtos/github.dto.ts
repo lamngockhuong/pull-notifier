@@ -30,6 +30,7 @@ class PullRequest {
   public state: PULL_REQUEST_STATE;
   public user: User;
   public assignees: User[];
+  public requested_reviewers: User[];
   public commits: number;
   public additions: number;
   public deletions: number;

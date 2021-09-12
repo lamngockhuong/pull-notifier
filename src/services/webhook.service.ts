@@ -137,13 +137,13 @@ class WebhookService {
       this.event(eventData) === EVENT.PULL_REQUEST_REOPENED
     ) {
       sender = eventData.pull_request.user.login;
-      const assignees = eventData.pull_request.assignees.map(o => o.login);
-      if (assignees.length == 0) {
+      const reviewers = eventData.pull_request.requested_reviewers.map(o => o.login);
+      if (reviewers.length == 0) {
         receivers = members.map(member => `[To:${member.chatwork_id}]`).join('');
       } else {
         receivers = members
           .map(member => {
-            if (assignees?.includes(member.github_id)) return `[To:${member.chatwork_id}]`;
+            if (reviewers?.includes(member.github_id)) return `[To:${member.chatwork_id}]`;
           })
           .join('');
       }
