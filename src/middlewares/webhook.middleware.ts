@@ -24,7 +24,7 @@ export const githubHeaderValidation = (req, res, next): RequestHandler => {
     // Set github event for body payload
     req.body.event = event;
 
-    if (config.get('env') === 'development') {
+    if (config.get('env') === 'development' || config.get('env') === 'production') {
       next();
       return;
     }
