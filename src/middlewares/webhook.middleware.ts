@@ -13,22 +13,33 @@ const getSignature = buf => {
   return 'sha256=' + hmac.digest('hex');
 };
 
-export const githubHeaderValidation = (req, res, next): RequestHandler => {
+export const githubEventValidation = (req, res, next): RequestHandler => {
+  const event = req.header(GITHUB_HEADER.X_GITHUB_EVENT);
+  if (
+    event !== GITHUB_EVENT.PULL_REQUEST &&
+    event !== GITHUB_EVENT.PULL_REQUEST_REVIEW &&
+    event !== GITHUB_EVENT.PULL_REQUEST_REVIEW_COMMENT &&
+    event !== GITHUB_EVENT.ISSUE_COMMENT
+  ) {
+    next(new HttpException(StatusCodes.OK, MESSAGES.CALL_GITHUB_WEBHOOK_NO_ACTION));
+    return;
+  }
+  next();
+};
+
+export const processGithubData = (req, res, next) => {
+  if (req.is('application/x-www-form-urlencoded')) {
+    req.body = JSON.parse(req.body.payload);
+  }
+
+  // Set github event for body payload
+  req.body.event = req.header(GITHUB_HEADER.X_GITHUB_EVENT);
+
+  next();
+};
+
+export const githubSignatureValidation = (req, res, next) => {
   try {
-    const event = req.header(GITHUB_HEADER.X_GITHUB_EVENT);
-    if (
-      event !== GITHUB_EVENT.PULL_REQUEST &&
-      event !== GITHUB_EVENT.PULL_REQUEST_REVIEW &&
-      event !== GITHUB_EVENT.PULL_REQUEST_REVIEW_COMMENT &&
-      event !== GITHUB_EVENT.ISSUE_COMMENT
-    ) {
-      next(new HttpException(StatusCodes.OK, MESSAGES.CALL_GITHUB_WEBHOOK_NO_ACTION));
-      return;
-    }
-
-    // Set github event for body payload
-    req.body.event = event;
-
     if (config.get('env') === 'development' || config.get('env') === 'production') {
       next();
       return;
