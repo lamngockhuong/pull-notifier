@@ -71,7 +71,8 @@ class App {
 
   private initializeSwagger() {
     const options = {
-      swaggerDefinition: {
+      definition: {
+        openapi: '3.0.3',
         info: {
           title: 'pull-notifier',
           version: '1.0.0',
