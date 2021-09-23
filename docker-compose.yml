@@ -1,28 +1,40 @@
-version: '3.7'
+version: '3.9'
 
 services:
-  proxy:
-    image: nginx:alpine
-    container_name: proxy
+  postgres:
+    image: postgres
+    container_name: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U pullnotifier" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
-      - '80:80'
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: pullnotifier
+      POSTGRES_USER: ${POSTGRES_USER:-pullnotifier}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pullnotifier@123}
+      PGDATA: /data/postgres
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - postgres_data:/data/postgres
     restart: 'unless-stopped'
     networks:
       - backend
   server:
     build:
       context: ./
-      target: development-build-stage
+      target: production-build-stage
       dockerfile: Dockerfile
-    container_name: server
+    container_name: pull_notifier_server
     ports:
       - '3000:3000'
     volumes:
       - ./:/app
       - /app/node_modules
     restart: 'unless-stopped'
+    depends_on:
+      - postgres
     networks:
       - backend
 
@@ -31,5 +43,5 @@ networks:
     driver: bridge
 
 volumes:
-  data:
+  postgres_data:
     driver: local
