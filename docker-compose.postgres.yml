@@ -21,22 +21,6 @@ services:
     restart: 'unless-stopped'
     networks:
       - backend
-  server:
-    build:
-      context: ./
-      target: production-build-stage
-      dockerfile: Dockerfile
-    container_name: pull_notifier_server
-    ports:
-      - '3000:3000'
-    volumes:
-      - ./:/app
-      - /app/node_modules
-    restart: 'unless-stopped'
-    depends_on:
-      - postgres
-    networks:
-      - backend
 
 networks:
   backend:
