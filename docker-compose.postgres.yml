@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U pullnotifier" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: pullnotifier
+      POSTGRES_USER: ${POSTGRES_USER:-pullnotifier}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pullnotifier@123}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres_data:/data/postgres
+    restart: 'unless-stopped'
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
