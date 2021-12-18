@@ -1,46 +1,51 @@
 version: '3.9'
 
 services:
-  postgres:
+  db:
     image: postgres
-    container_name: postgres
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U pullnotifier" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     ports:
-      - '5432:5432'
+      - '15432:5432'
     environment:
-      POSTGRES_DB: pullnotifier
-      POSTGRES_USER: ${POSTGRES_USER:-pullnotifier}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pullnotifier@123}
-      PGDATA: /data/postgres
+      - POSTGRES_DB=pullnotifier
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - PGDATA=/data/postgres
     volumes:
       - postgres_data:/data/postgres
-    restart: 'unless-stopped'
+    command: postgres -c log_destination=stderr -c log_statement=all -c log_connections=on -c log_disconnections=on
     networks:
-      - backend
-  server:
+      - default
+      - shared_network
+    logging:
+      options:
+        max-size: '10k'
+        max-file: '5'
+
+  backend:
     build:
       context: ./
-      target: production-build-stage
-      dockerfile: Dockerfile
-    container_name: pull_notifier_server
+      dockerfile: Dockerfile.local
+    environment:
+      NODE_ENV: development
     ports:
-      - '3000:3000'
+      - '10000:3000'
+      - '9229:9229'
     volumes:
-      - ./:/app
-      - /app/node_modules
-    restart: 'unless-stopped'
-    depends_on:
-      - postgres
+      # Mount current dir into docker container
+      - .:/home/node/app
+      # Ignore local node_modules, use container
+      - /home/node/app/node_modules
+    command: sh -c 'npm run prisma:generate; npm run start:debug'
+    env_file:
+      - .env.docker
     networks:
-      - backend
+      - default
+      - shared_network
+    tty: true
 
 networks:
-  backend:
-    driver: bridge
+  shared_network:
+    external: true
 
 volumes:
   postgres_data:
