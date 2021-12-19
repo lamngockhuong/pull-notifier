@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import WebhooksController from '@controllers/webhooks.controller';
-import { githubSignatureValidation, githubEventValidation, processGithubData } from '@middlewares/webhook.middleware';
+import { githubEventValidation, githubSignatureValidation, processGithubData } from '@middlewares/webhook.middleware';
 
 class WebhooksRoute implements Routes {
   public path = '/webhooks';

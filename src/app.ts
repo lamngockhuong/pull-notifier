@@ -54,7 +54,7 @@ class App {
       express.json({
         verify: (req: Request, res: ServerResponse, buf: Buffer) => {
           if (req.url.startsWith('/webhooks/github')) {
-            req.body.rawBody = buf;
+            res['locals'].bodyBuffer = buf;
           }
         },
       }),

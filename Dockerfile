@@ -1,11 +1,16 @@
 # Common build stage
-FROM node:14-alpine3.14 as common-build-stage
+FROM node:16.13-alpine as common-build-stage
+USER node
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+WORKDIR /home/node/app
 
-COPY . ./app
+COPY --chown=node:node package*.json .
 
-WORKDIR /app
-
+# Install dependencies
 RUN npm install
+
+# Copy sources
+COPY --chown=node:node . .
 
 EXPOSE 3000
 
@@ -14,11 +19,7 @@ FROM common-build-stage as development-build-stage
 
 ENV NODE_ENV development
 
-CMD ["npm", "run", "dev"]
-
 # Production build stage
 FROM common-build-stage as production-build-stage
 
 ENV NODE_ENV production
-
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
