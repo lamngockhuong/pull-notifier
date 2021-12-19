@@ -1,3 +1,5 @@
+import * as crypto from 'crypto';
+
 /**
  * @method isEmpty
  * @param {String | Number | Object} value
@@ -16,4 +18,10 @@ export const isEmpty = (value: string | number | object): boolean => {
   } else {
     return false;
   }
+};
+
+export const getSignature = buf => {
+  const hmac = crypto.createHmac('sha256', process.env.SECRET_TOKEN);
+  hmac.update(buf, 'utf-8');
+  return 'sha256=' + hmac.digest('hex');
 };

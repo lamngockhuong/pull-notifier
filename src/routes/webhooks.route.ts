@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import WebhooksController from '@controllers/webhooks.controller';
-import { githubSignatureValidation, githubEventValidation, processGithubData } from '@middlewares/webhook.middleware';
+import { githubEventValidation, processGithubData } from '@middlewares/webhook.middleware';
 
 class WebhooksRoute implements Routes {
   public path = '/webhooks';
@@ -13,7 +13,7 @@ class WebhooksRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.post(`${this.path}/github/:key`, githubEventValidation, processGithubData, githubSignatureValidation, this.webhooksController.github);
+    this.router.post(`${this.path}/github/:key`, githubEventValidation, processGithubData, this.webhooksController.github);
   }
 }
 
