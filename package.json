@@ -5,7 +5,7 @@
   "author": "me@ngockhuong.com",
   "license": "MIT",
   "scripts": {
-    "prepare": "husky install",
+    "husky:prepare": "husky install",
     "packages:update": "ncu -u",
     "start": "npm run build && cross-env NODE_ENV=production node dist/server.js",
     "start:dev": "cross-env NODE_ENV=development nodemon",
