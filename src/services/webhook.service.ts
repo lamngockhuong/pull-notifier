@@ -92,6 +92,13 @@ class WebhookService {
     return item;
   }
 
+  public async findSecretTokenByKey(serviceKey: string): Promise<string> {
+    const { secret_token: secretToken } = await this.webhooks.findUnique({ where: { service_key: serviceKey }, select: { secret_token: true } });
+    if (!secretToken) throw new HttpException(StatusCodes.CONFLICT, MESSAGES.WEBHOOK_NOT_FOUND);
+
+    return secretToken;
+  }
+
   public getChatworkToken(webhook: Webhook): string {
     if (isEmpty(webhook)) throw new HttpException(StatusCodes.CONFLICT, MESSAGES.WEBHOOK_NOT_FOUND);
     if (webhook?.bot && typeof webhook?.bot === 'object') {
