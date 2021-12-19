@@ -155,7 +155,7 @@ export default class Chatwork {
 
   private saveRateLimits(headers: any) {
     const rateLimits = Object.entries(headers)
-      .filter(([key, value]) => key.startsWith('x-ratelimit'))
+      .filter(([key]) => key.startsWith('x-ratelimit'))
       .map(([key, value]) => [key, Number(value)]);
     this._rateLimits = Object.fromEntries(rateLimits) as RateLimits;
   }

@@ -1,12 +1,14 @@
 {
-    "watch": [
-        "src",
-        ".env"
-    ],
-    "ext": "js,ts,json",
-    "ignore": [
-        "src/**/*.spec.ts",
-        "src/**/*.test.ts"
-    ],
-    "exec": "node --inspect=0.0.0.0:9229 -r ts-node/register -r tsconfig-paths/register src/server.ts"
+  "watch": [
+    "src",
+    "static",
+    ".env"
+  ],
+  "verbose": true,
+  "ext": "js,ts,json,pr",
+  "ignore": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ],
+  "exec": "node --inspect=0.0.0.0:9229 -r ts-node/register -r tsconfig-paths/register src/server.ts"
 }
