@@ -20,8 +20,8 @@ export const isEmpty = (value: string | number | object): boolean => {
   }
 };
 
-export const getSignature = buf => {
-  const hmac = crypto.createHmac('sha256', process.env.SECRET_TOKEN);
+export const getSignature = (buf: any, secretToken: string) => {
+  const hmac = crypto.createHmac('sha256', secretToken);
   hmac.update(buf, 'utf-8');
   return 'sha256=' + hmac.digest('hex');
 };
