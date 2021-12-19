@@ -15,6 +15,8 @@
     "test": "jest --forceExit --detectOpenHandles",
     "lint": "eslint --ignore-path .gitignore --ext .ts src/",
     "lint:fix": "npm run lint -- --fix",
+    "prettier": "prettier --config ./.prettierrc -c './*.json'",
+    "prettier:fix": "npm run prettier -- --write",
     "prisma:init": "prisma init",
     "prisma:migrate": "prisma migrate dev --preview-feature",
     "prisma:generate": "prisma generate",

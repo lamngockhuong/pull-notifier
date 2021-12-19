@@ -14,6 +14,10 @@ import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
 import { ServerResponse } from 'http';
+import { getSignature } from './utils/util';
+import { GITHUB_HEADER } from '@/constants/headers';
+import { HttpException } from '@exceptions/HttpException';
+import { StatusCodes } from '@utils/status-code';
 
 class App {
   public app: express.Application;
@@ -54,7 +58,19 @@ class App {
       express.json({
         verify: (req: Request, res: ServerResponse, buf: Buffer) => {
           if (req.url.startsWith('/webhooks/github')) {
-            req.body.rawBody = buf;
+            if (config.get('env') === 'development') {
+              return;
+            }
+
+            const expected = req.header(GITHUB_HEADER.X_HUB_SIGNATURE_256);
+            const calculated = getSignature(buf); // buf is minified body data json
+            logger.info(`${GITHUB_HEADER.X_HUB_SIGNATURE_256} expected: ${expected}, calculated: ${calculated}`);
+            if (expected !== calculated) {
+              logger.debug('Invalid github webhook signature');
+              throw new HttpException(StatusCodes.UNAUTHORIZED, 'Invalid github webhook signature');
+            } else {
+              logger.info('Valid signature!');
+            }
           }
         },
       }),
