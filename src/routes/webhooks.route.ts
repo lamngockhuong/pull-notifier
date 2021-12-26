@@ -13,6 +13,11 @@ class WebhooksRoute implements Routes {
   }
 
   private initializeRoutes() {
+    this.router.get(`${this.path}/:id`, this.webhooksController.getWebhook);
+    this.router.get(`${this.path}`, this.webhooksController.listWebhook);
+    this.router.post(`${this.path}`, this.webhooksController.createWebhook);
+    this.router.post(`${this.path}/:id`, this.webhooksController.updateWebhook);
+    this.router.delete(`${this.path}/:id`, this.webhooksController.deleteWebhook);
     this.router.post(`${this.path}/github/:key`, githubEventValidation, processGithubData, githubSignatureValidation, this.webhooksController.github);
   }
 }

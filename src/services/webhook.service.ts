@@ -9,17 +9,24 @@ import { EVENT, PR_TEMPLATE } from '@/constants/commons';
 import { Prisma, PrismaClient, Webhook } from '@prisma/client';
 import { logger } from '@utils/logger';
 import { GITHUB_EVENT } from '@/constants/headers';
+import ChatworkService from './chatwork.service';
 
 class WebhookService {
+  private chatworkService = new ChatworkService();
   public webhooks = new PrismaClient().webhook;
   private chatwork = new Chatwork();
+
+  listWebhooks(userId: number) {
+    console.log(userId);
+    throw new Error('Method not implemented.');
+  }
 
   public async github(key: string, eventData: GithubDto): Promise<any> {
     if (isEmpty(eventData)) throw new HttpException(StatusCodes.BAD_REQUEST, MESSAGES.REQUEST_BODY_REQUIRED);
     const webhook = await this.findByKey(key);
 
     // Set specify chatwork token
-    this.chatwork.apiToken = this.getChatworkToken(webhook);
+    this.chatwork.apiToken = this.chatworkService.getChatworkToken(webhook);
 
     const room = this.getRoom(webhook);
     const { receivers } = this.getSenderAndReceivers(room.members, eventData);
@@ -97,26 +104,6 @@ class WebhookService {
     if (!secretToken) throw new HttpException(StatusCodes.CONFLICT, MESSAGES.WEBHOOK_NOT_FOUND);
 
     return secretToken;
-  }
-
-  public getChatworkToken(webhook: Webhook): string {
-    if (isEmpty(webhook)) throw new HttpException(StatusCodes.CONFLICT, MESSAGES.WEBHOOK_NOT_FOUND);
-    if (webhook?.bot && typeof webhook?.bot === 'object') {
-      const bot = webhook.bot as Prisma.JsonObject;
-      return bot.chatwork_token as string;
-    }
-
-    return null;
-  }
-
-  public getSlackToken(webhook: Webhook): string {
-    if (isEmpty(webhook)) throw new HttpException(StatusCodes.CONFLICT, MESSAGES.WEBHOOK_NOT_FOUND);
-    if (webhook?.bot && typeof webhook?.bot === 'object') {
-      const bot = webhook.bot as Prisma.JsonObject;
-      return bot.slack_token as string;
-    }
-
-    return null;
   }
 
   public getRoom(webhook: Webhook): any {
