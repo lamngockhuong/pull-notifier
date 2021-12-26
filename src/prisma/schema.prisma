@@ -16,7 +16,28 @@ model Webhook {
   room         Json
   setting      Json?
   created_at   DateTime @default(now())
+  created_by   Int?
   updated_at   DateTime @updatedAt
+  User         User?    @relation(fields: [created_by], references: [id])
 
   @@map("webhook")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  password   String
+  fullname   String?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  role       Role
+  Webhook    Webhook[]
+
+  @@map("user")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  MEMBER
 }
